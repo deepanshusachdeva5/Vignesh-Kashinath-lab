@@ -1193,7 +1193,7 @@ class TUNet(nn.Module):
 
 # %%
 
-class MultiTUNet(nn.Module):
+class MultiUNet(nn.Module):
     """
     This function creates a U-Net model commonly used for image semantic
     segmentation. The model takes in an input image and outputs a segmented
@@ -1653,6 +1653,14 @@ class MultiTUNet(nn.Module):
 # %% [markdown]
 # # Model parameters
 
+# %% [markdown]
+# 1. For depth, the most commonly used parameters are 4,5, and rarely 3, 6. With increased Depth, the model complexity increases and requires more memory on GPU
+# 2. For base_channels, the most commonly used parameters are 16, 32 and rarely 24, 48, 64. With the increased number of base channels, the model complexity increases and requires more memory on GPU
+# 3. For rest of parameters, growth_rate=2, hidden_rate=2, normalization=nn.BatchNorm2d , the deafult values are used.
+# 4. in_channels=1 for all grayscale (Black&White) images. Most of the CryoSegment used grayscale images
+# 5. out_channels is automatically configured to output multiples channels (grayscale images) based on the number of structures (+1 background)
+# 6. LEARNING_RATE is default set to 1e-3=0.001. Run experiments by increasing/decreasing the Learning rate by 0.001 and use the Learning rate with the highest performance.  
+
 # %%
 depth = 4
 base_channels = 32
@@ -1660,15 +1668,12 @@ growth_rate = 2
 hidden_rate = 1
 in_channels = 1
 out_channels = len(num_labels)
-num_layers = 40             
-layer_width = 1 
-max_dilation = 15 
 normalization = nn.BatchNorm2d
 LEARNING_RATE = 1e-3
 print("Learning Rate:", LEARNING_RATE)
 
 
-model = MultiTUNet(image_shape=(train_imgs.shape[2:4]),
+model = MultiUNet(image_shape=(train_imgs.shape[2:4]),
             in_channels=in_channels,
             out_channels=out_channels,
             depth=depth,
@@ -1689,6 +1694,7 @@ optimizer_model = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
 # %% [markdown]
 # ### Loss function
+# ##### (Optional) Based on the Analysis(How many slices have the structure), loss function can be weighted. Weights are choosen in the inverse order of the counts. Minimum weight possible would be 1 and the maximum value would be 5. If all the structures have same number of slices, weights are not used (i.e default would be 1 for all). Weighing the least occuring structures in slices with higher values would provide more importance for that structure.
 
 # %%
 # class_weights = torch.FloatTensor([1,2,2,5]).to(device)
@@ -1719,6 +1725,8 @@ torch.cuda.empty_cache()
 
 # %% [markdown]
 # # Setup
+# 
+# (Specify the name of the Results directory)
 
 # %%
 
@@ -2045,8 +2053,8 @@ plt.plot(results['F1 training macro'], linewidth=2, label='training')
 plt.plot(results['F1 validation macro'], linewidth=2, label='validation')
 plt.yscale('log')
 plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.title('TUnet with ReLU and BatchNorm')
+plt.ylabel('F1 macro')
+plt.title('Multi-Unet ')
 plt.legend()
 plt.tight_layout()
 plt.savefig(main_dir + '/losses')
@@ -2088,10 +2096,10 @@ np.save(main_dir+'/params.npy',params)
 def create_network(model_type, params):
     # set model parameters and initialize the network
     if model_type == 'TUNet':
-        net = tunet.TUNet(**params)
+        net = TUNet(**params)
         return net, params
-    elif model_type == 'MultiTUNet':
-        net = MultiTUNet(**params)
+    elif model_type == 'MultiUNet':
+        net = MultiUNet(**params)
         return net, params
     else:
         return None, None
@@ -2126,13 +2134,11 @@ def display(array1, array2):
 
 
 # %%
-def regression_metrics( preds, target):
-    tmp = corcoef.cc(preds.cpu().flatten(), target.cpu().flatten() )
-    return(tmp)
-
-# %%
 
 results_dir = main_dir
+
+# %% [markdown]
+# #### Specify the model name 
 
 # %%
 params = np.load(results_dir + '/params.npy', allow_pickle=True)
@@ -2142,7 +2148,7 @@ print('The following define the network parameters: ', params)
 
 # %%
 # model_type = 'TUNet'
-model_type = 'MultiTUNet'  
+model_type = 'MultiUNet'  
 
 net, model_params = create_network(model_type, params)
 net.load_state_dict(torch.load(results_dir + '/net'))
@@ -2164,7 +2170,7 @@ net.to(device)
 # ## Load images
 
 # %%
-#### Specify tomogram images and predictions location
+#### Specify tomogram images and predictions directories
 
 # %%
 # images_dir = "/data/Chromatin/MultiScale/Paper/Tau/TS30_wbp_bin2_flipped/images"
