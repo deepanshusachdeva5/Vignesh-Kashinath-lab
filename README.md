@@ -74,8 +74,54 @@
   <li>
     Keep image size atleast 256 x 256
   </li>
+</ul>
+## Code Explanation
+<ul>
+  <li>
+    Library and Module Imports
+  </li>
+  <li>
+    Setting Base Directory for all the resources
+  </li>
 
   <li>
-    
+    Separate variables for train images and masks
+  </li>
+
+  <li>
+    since we are using a segmentation model, we are splitting the images into patches of size 256 x256 with a step size of 64 x 64
+  </li>
+
+  <li>
+    preprocessing to clean the data so that the model works better, the steps include edge detection and histogram equalization
+  </li>
+
+  <li>
+    Train/Test split
+  </li>
+
+  <li>
+    Defining Data Loaders so that large datasets are loaded into the memory with ease
+  </li>
+
+  <li>
+    Definining the model
+  </li>
+
+  <li>
+    Setting Hyperparameters (Try changing learning rate )
+  </li>
+
+  <li>
+    Setting the training device (works faster on GPU)
+  </li>
+
+  <li>
+    Training 
+  </li>
+
+  <li>
+    Inference using postprocessing by combining the same labels on each slice (image) stacked together to generate a 3D structure
   </li>
 </ul>
+
