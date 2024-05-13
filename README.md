@@ -72,7 +72,7 @@
   </li>
 
   <li>
-    
+    Keep image size atleast 256 x 256
   </li>
 
   <li>
