@@ -1,7 +1,13 @@
 # Vignesh-Kashinath-lab
 
-## How to run 
+## Installation
+#### Jupyter Notebook
 <ul>
+
+
+<li>
+  Create Python Environment
+</li>
 
 <li>
   Install Jupyter Notebook (https://jupyter.org/install)
@@ -16,7 +22,16 @@
 </li>
 
 <li>
-  type the command - "jupyter notebook"
+  Activate the environment
+</li>
+
+<li>
+  install requirements file
+</li>
+
+
+<li>
+  Launch Jupyter Notebook
 </li>
 
 <li>
@@ -36,7 +51,24 @@
   </li>
 
   <li>
-
+      Parameters to be changed:
+      <ul>
+        <li>
+          basedir (change this to the path where all things are stored)
+        </li>
+        <li>
+          train_imgs, train_masks with appropriate folders
+        </li>
+        <li>
+          Annotations on Napari or some tool
+        </li>
+        <li>
+          10-20 images, with background as 0, 1 - structure1, 2, structure2, ...
+        </li>
+        <li>
+          masks.tif (all the 10-20 images)
+        </li>
+      </ul>
   </li>
 
   <li>
