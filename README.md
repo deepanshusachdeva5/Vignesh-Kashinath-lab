@@ -75,6 +75,7 @@
     Keep image size atleast 256 x 256
   </li>
 </ul>
+
 ## Code Explanation
 <ul>
   <li>
@@ -119,6 +120,8 @@
   <li>
     Training 
   </li>
+
+</ul>
 
   <li>
     Inference using postprocessing by combining the same labels on each slice (image) stacked together to generate a 3D structure
